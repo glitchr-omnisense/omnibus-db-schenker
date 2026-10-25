@@ -34,7 +34,7 @@ final class DbSchenkerGatewayFactory extends GatewayFactory
                 return new Api($http, $c['api_key'] ?: null, $c['account_number'] ?: null);
             },
             'omnibus.action.tracking' => new TrackingAction(),
-            'omnibus.action.shipping' => static fn (Config $c) => $c['api_key'] ? new ShippingAction() : null,
+            'omnibus.action.shipping' => static fn (Config $c) => $c['api_key'] && $c['account_number'] ? new ShippingAction() : null,
         ]);
     }
 }

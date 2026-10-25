@@ -5,7 +5,7 @@ namespace Omnibus\DbSchenker\Tests;
 use Omnibus\DbSchenker\DbSchenkerGatewayFactory;
 use Omnibus\Model\TrackingStatus;
 use Omnibus\Request\Shipping;
-use Omnibus\Tests\Fixtures;
+use Omnibus\Testing\Fixtures;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpClient\MockHttpClient;
 use Symfony\Component\HttpClient\Response\MockResponse;
