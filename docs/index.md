@@ -1,6 +1,6 @@
 # omnibus/db-schenker
 
-DB Schenker for [omniscient/omnibus](https://github.com/glitchr-studio/omnibus): tracking through
+DB Schenker for [omnisense/omnibus](https://github.com/glitchr-omnisense/omnibus): tracking through
 eSchenker's public tracking (no credentials), and land-transport bookings through the Schenker
 Open API when an API key and an account are configured. Schenker quotes prices by contract: they
 come from the `rates` option. The gateway calls:
@@ -18,7 +18,7 @@ There is no sandbox: both addresses are the live ones. Every call has a 20-secon
 composer require omnibus/db-schenker
 ```
 
-Requires PHP 8.2, `omniscient/omnibus` (2.x) and `symfony/http-client` (6.4, 7 or 8); given no
+Requires PHP 8.2, `omnisense/omnibus` (2.x) and `symfony/http-client` (6.4, 7 or 8); given no
 HTTP client, the factory makes one with `HttpClient::create()`. In a Symfony application with
 `Omnibus\Bridge\Symfony\OmnibusBundle`, the factory is registered as soon as the package is
 installed.
@@ -38,7 +38,7 @@ No option is required: `(new DbSchenkerGatewayFactory())->create()` builds a gat
 |---|---|---|---|---|
 | `api_key` | ?string | `null` | no | the Open API key; with `account_number`, makes bookings possible |
 | `account_number` | ?string | `null` | no | the booking account, sent as `accountNumber` |
-| `rates` | list | - | no | the only way this gateway rates ([the rates option](https://github.com/glitchr-studio/omnibus/blob/2.x/docs/configuration.md#the-rates-option)) |
+| `rates` | list | - | no | the only way this gateway rates ([the rates option](https://github.com/glitchr-omnisense/omnibus/blob/2.x/docs/configuration.md#the-rates-option)) |
 
 Shipment options read when booking (`Shipment::$options`):
 

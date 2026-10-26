@@ -1,6 +1,6 @@
 # omnibus/db-schenker
 
-DB Schenker for [omniscient/omnibus](https://github.com/glitchr-studio/omnibus): tracking through
+DB Schenker for [omnisense/omnibus](https://github.com/glitchr-omnisense/omnibus): tracking through
 eSchenker's public tracking (no credentials), and land-transport bookings through the Schenker
 Open API when an API key is configured. Prices come from configuration (`rates`): Schenker quotes
 by contract.
@@ -9,7 +9,7 @@ by contract.
 $gateway = (new DbSchenkerGatewayFactory($http))->create($options);   // $http: the application's HTTP client - none given, the factory makes its own; the options below
 ```
 
-No framework needed: the package requires `omniscient/omnibus` and `symfony/http-client`. In a
+No framework needed: the package requires `omnisense/omnibus` and `symfony/http-client`. In a
 Symfony application, the same through the bundle's configuration:
 
 ```yaml
