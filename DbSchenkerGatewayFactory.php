@@ -25,13 +25,14 @@ final class DbSchenkerGatewayFactory extends GatewayFactory
         $config->defaults([
             'omnibus.factory_name' => 'db_schenker',
             'omnibus.factory_title' => 'DB Schenker',
+            'omnibus.policy' => __DIR__.'/policy.json',
             'omnibus.required_options' => [],
             'api_key' => null,
             'account_number' => null,
             'omnibus.api' => function (Config $c) {
                 $http = $this->http ?? HttpClient::create();
 
-                return new Api($http, $c['api_key'] ?: null, $c['account_number'] ?: null);
+                return new Api($http, $c['api_key'] ?: null, $c['account_number'] ?: null, backoff: $c->backoff());
             },
             'omnibus.action.tracking' => new TrackingAction(),
             'omnibus.action.shipping' => static fn (Config $c) => $c['api_key'] && $c['account_number'] ? new ShippingAction() : null,

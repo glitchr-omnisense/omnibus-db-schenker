@@ -150,6 +150,10 @@ omnibus:
                     - { service: SYSTEM, label: 'DB Schenker System', bands: { 30000: 2900 } }
 ```
 
+## Usage policy
+
+`policy.json` (named in `composer.json`'s `extra.omnisense.policy`): its limits are unknown (`null`) and `verifiedAt` is `null`: the package's API calls are unverified against a live account (see Verified, and not), so its terms were not checked either. Access is under the carrier's contract. A shipment is sent once. A 429 is a `RateLimitedException`, never retried, and the carrier's next calls wait for its `Retry-After`, unsent. See omnisense/omnibus' [Usage policies and rate limits](https://github.com/glitchr-omnisense/omnibus/blob/2.x/docs/policies.md).
+
 ## Errors
 
 Every failure is an `Omnibus\Exception\CarrierException` whose `carrier` is `db_schenker`:

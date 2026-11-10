@@ -4,6 +4,8 @@ namespace Omnibus\DbSchenker;
 
 use Omnibus\Exception\CarrierException;
 use Omnibus\Http\Redaction;
+use Omnibus\Http\Throttle;
+use Omnisense\Contracts\Policy\Backoff;
 use Symfony\Contracts\HttpClient\Exception\ExceptionInterface as HttpExceptionInterface;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 
@@ -22,6 +24,8 @@ final class Api
         public readonly ?string $apiKey = null,
         public readonly ?string $accountNumber = null,
         private readonly int $timeout = 20,
+        /** The waits the carrier asks for (omnisense/contracts' Backoff): no call while one lasts, a 429 a RateLimitedException, never retried */
+        private readonly ?Backoff $backoff = null,
     ) {
     }
 
@@ -29,8 +33,10 @@ final class Api
     public function track(string $number): array
     {
         try {
+            Throttle::before($this->backoff);
             $response = $this->http->request('GET', self::TRACKING, ['query' => ['refNumber' => $number], 'headers' => ['Accept' => 'application/json'], 'timeout' => $this->timeout]);
             $status = $response->getStatusCode();
+            Throttle::after($this->backoff, 'db_schenker', $status, $response->getHeaders(false));
             $data = json_decode($response->getContent(false), true);
         } catch (HttpExceptionInterface $e) {
             $secrets = $this->secrets();
@@ -51,12 +57,14 @@ final class Api
             throw Redaction::withoutArguments(new CarrierException('db_schenker', 'Bookings need the Open API key and the account number (options api_key, account_number).'));
         }
         try {
+            Throttle::before($this->backoff);
             $response = $this->http->request($method, self::BOOKING.$path, [
                 'headers' => ['X-API-Key' => $this->apiKey, 'Content-Type' => 'application/json', 'Accept' => 'application/json'],
                 'body' => null === $body ? null : json_encode($body, \JSON_THROW_ON_ERROR),
                 'timeout' => $this->timeout,
             ]);
             $status = $response->getStatusCode();
+            Throttle::after($this->backoff, 'db_schenker', $status, $response->getHeaders(false));
             $data = json_decode($response->getContent(false), true);
         } catch (HttpExceptionInterface|\JsonException $e) {
             $secrets = $this->secrets();
