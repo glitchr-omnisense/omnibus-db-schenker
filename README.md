@@ -5,6 +5,43 @@ eSchenker's public tracking (no credentials), and land-transport bookings throug
 Open API when an API key is configured. Prices come from configuration (`rates`): Schenker quotes
 by contract.
 
+## Install and a first call
+
+```sh
+composer require omnibus/db-schenker
+```
+
+No account for this first call: DB Schenker's answer is recorded
+(`Omnibus\Testing\RecordedHttpClient` answers in place of the API), so nothing leaves the process.
+With your own credentials, give the factory your HTTP client (or none: it makes its own) and drop
+the recorded one.
+
+```php
+<?php
+
+require __DIR__.'/vendor/autoload.php';
+
+use Omnibus\DbSchenker\DbSchenkerGatewayFactory;
+use Omnibus\Testing\RecordedHttpClient;
+
+// DB Schenker's answer, recorded: no account, and nothing leaves the process.
+$http = new RecordedHttpClient([
+    'eschenker.dbschenker.com' => ['shipments' => [['shipmentNumber' => '1234567890', 'status' => 'Delivered', 'events' => [
+        ['eventDate' => '2026-10-02T09:40:00', 'eventCode' => 'DLV', 'eventDescription' => 'Delivered', 'location' => ['city' => 'Lyon', 'country' => 'FR']],
+    ]]]],
+]);
+$gateway = (new DbSchenkerGatewayFactory($http))->create([]);
+
+$tracking = $gateway->track('1234567890');
+echo $tracking->status->value, ' - ', $tracking->latest()?->description, "\n";   // delivered - Delivered
+```
+
+Tracking needs no account at DB Schenker; a booking needs an Open API key (below). Nothing here was
+run against DB Schenker's service: the answer is shaped after its documentation, and the bookings
+are **unverified**.
+
+## Configuration
+
 ```php
 $gateway = (new DbSchenkerGatewayFactory($http))->create($options);   // $http: the application's HTTP client - none given, the factory makes its own; the options below
 ```
